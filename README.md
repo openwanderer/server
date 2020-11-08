@@ -1,7 +1,7 @@
 OpenWanderer / OTV-4
 ====================
 
-This is the OpenWanderer server component. I've now decided to do a partial re-write of the code as it is going to work significantly different to the current version of OpenTrailView (OpenTrailView 360) and consequently will have only partially common code. To try and keep the platform "clean", the aim now will be to use purely sequence-based navigation on OpenWanderer, in which navigation from one pano to another is done by following an uploaded sequence. The OSM-based navigation of current OpenTrailView will not, at least for now, be included. The next version of OpenTrailView, OTV-4, will be based on OpenWanderer.
+This is the OpenWanderer server component. The code is partly based on that of OpenTrailView, but with some significant differences. To try and keep the platform "clean", the aim now will be to use purely sequence-based navigation on OpenWanderer, in which navigation from one pano to another is done by following an uploaded sequence. The OSM-based navigation of current OpenTrailView will not, at least for now, be included. The next version of OpenTrailView, OTV-4, will be based on OpenWanderer.
 
 Licensing
 ---------

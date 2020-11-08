@@ -2,6 +2,7 @@
 
 require 'vendor/autoload.php';
 require 'defines.php';
+$setup_core_routes = require 'routes/core_routes.php';
 
 use \Slim\Factory\AppFactory;
 use \Psr\Http\Message\ServerRequestInterface as Request;
@@ -25,6 +26,7 @@ $app->get('/', function(Request $req, Response $res, array $args) use ($view) {
 	return $view->render($res, 'index.html');
 });
 
+$setup_core_routes($app);
 
 $app->run();
 
