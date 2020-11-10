@@ -12,3 +12,23 @@ As of the first commit on October 10, 2020, the code is now licensed under the L
 - but also allow proprietary applications to *use* OpenWanderer code.
 
 Any further changes to the current OpenTrailView - OTV360; repo [here](https://gitlab.com/nickw1/opentrailview) will remain under the GPL v3.
+
+Building the server
+-------------------
+
+Dependencies are managed by Composer. Please use:
+
+`composer install`
+
+to install the dependencies.
+
+To run the demo you need to install the `jsapi` repository into the same directory as this repository, and then:
+
+```
+cd js
+npm run build
+```
+
+If you do this and setup a local server you should be able to view the demo e.g. via:
+
+`http://localhost`

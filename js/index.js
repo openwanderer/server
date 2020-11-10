@@ -1,4 +1,4 @@
-import * as OpenWanderer from '../../../jsapi/index.js';
+import * as OpenWanderer from './jsapi/index.js';
 
 const viewer = new OpenWanderer.Viewer('#pano');
 
