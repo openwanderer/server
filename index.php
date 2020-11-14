@@ -26,6 +26,9 @@ $app->get('/', function(Request $req, Response $res, array $args) use ($view) {
 	return $view->render($res, 'index.html');
 });
 
+$app->get('/nav', function(Request $req, Response $res, array $args) use ($view) {
+	return $view->render($res, 'nav.html');
+});
 $setup_core_routes($app);
 
 $app->run();

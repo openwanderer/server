@@ -24,7 +24,7 @@ class PanoController {
             $row = $this->model->getByIdAuthorised($args["id"], $this->uid);
         }
         if($row) {
-			$row["sequence"] = $this->model->getSequenceForPano($args["id"]);
+            $row["seqid"] = $this->model->getSequenceForPano($args["id"]);
             return $res->withJson($row);
         } else {
         return $res->withStatus(404)->withJson(["error"=>"Cannot find pano with that ID or you are not authorised to view it."]);
