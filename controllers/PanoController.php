@@ -6,7 +6,7 @@ use \Psr\Container\ContainerInterface;
 
 
 require_once(dirname(__DIR__).'/models/Photosphere.php');
-require_once(dirname(__DIR__).'/models/PanoModel.php');
+require_once(dirname(__DIR__).'/models/PanoDao.php');
 
 
 class PanoController {
@@ -14,7 +14,7 @@ class PanoController {
 
     public function __construct(ContainerInterface $container) {
         $this->uid = isset($_SESSION["userid"]) ? $_SESSION["userid"] : null;
-        $this->model = new PanoModel($container->get('db'));
+        $this->model = new PanoDao($container->get('db'));
     }
 
     function getById(Request $req, Response $res, array $args){ 

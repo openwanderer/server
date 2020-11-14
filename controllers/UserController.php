@@ -5,14 +5,14 @@ use \Psr\Http\Message\ResponseInterface as Response;
 use \Psr\Container\ContainerInterface;
 
 require_once('defines.php');
-require_once(dirname(__DIR__).'/models/UserModel.php');
+require_once(dirname(__DIR__).'/models/UserDao.php');
 
 class UserController {
 
     protected $model;
 
     public function __construct(ContainerInterface $container) {
-        $this->model = new UserModel($container->get('db'));
+        $this->model = new UserDao($container->get('db'));
     }
 
     public function getLogin(Request $req, Response $res, array $args){

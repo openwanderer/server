@@ -6,7 +6,7 @@ use \Psr\Container\ContainerInterface;
 
 require_once('defines.php');
 
-class UserModel {
+class UserDao {
 
     protected $db;
 

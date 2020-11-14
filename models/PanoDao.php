@@ -1,6 +1,6 @@
 <?php
 
-class PanoModel {
+class PanoDao {
 
     function __construct($db) {
         $this->db = $db;
