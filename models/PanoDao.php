@@ -112,6 +112,28 @@ class PanoDao {
         return $id;
     }
 
+    function getSequenceForPano($panoid) {
+        $stmt = $this->db->prepare("SELECT sequenceid FROM sequence_panos WHERE panoid=?");
+        $stmt->execute([$panoid]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row === false ? 0 : $row["sequenceid"];
+    }
+
+    function getFullSequenceForPano($panoid) {
+        $stmt = $this->db->prepare("SELECT ST_AsText(p.the_geom) as geom, s.panoid FROM sequence_panos s, panoramas p WHERE s.panoid=p.id AND sequenceid=(SELECT sequenceid FROM sequence_panos WHERE panoid=?) ORDER BY s.id");
+        $stmt->execute([$panoid]);
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return array_map ( function($row) {
+            $m = [];
+            preg_match("/POINT\(([\d\-\.]+) ([\d\-\.]+)\)/", $row["geom"], $m);
+            return [
+                "id" => $row["panoid"],
+                "lon" => $m[1],
+                "lat" => $m[2]
+            ];
+        } ,  $rows);
+    }
+
     private function getRowOrNull($stmt) {
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         if($row !== false) {
