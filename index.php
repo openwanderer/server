@@ -23,12 +23,13 @@ $container->set('db', function() {
 $view = new \Slim\Views\PhpRenderer('views');
 
 $app->get('/', function(Request $req, Response $res, array $args) use ($view) {
-	return $view->render($res, 'index.html');
+	return $view->render($res, 'index.phtml', ["mode" => "basic"]);
 });
 
 $app->get('/nav', function(Request $req, Response $res, array $args) use ($view) {
-	return $view->render($res, 'nav.html');
+	return $view->render($res, "index.phtml", ["mode" => "nav"]);
 });
+
 $setup_core_routes($app);
 
 $app->run();
