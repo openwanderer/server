@@ -9,19 +9,19 @@ require_once(dirname(__DIR__).'/models/UserDao.php');
 
 class UserController {
 
-    protected $model;
+    protected $dao;
 
     public function __construct(ContainerInterface $container) {
-        $this->model = new UserDao($container->get('db'));
+        $this->dao = new UserDao($container->get('db'));
     }
 
     public function getLogin(Request $req, Response $res, array $args){
-        return $res->withJson(["username"=>isset($_SESSION["username"]) ? $_SESSION["username"]: (isset($_SESSION["userid"]) ? $this->model->getUsername($_SESSION["userid"]):null), "userid"=>isset($_SESSION["userid"]) ? $_SESSION["userid"]: 0, "isadmin"=>isset($_SESSION['isadmin']) ? $_SESSION['isadmin']: 0]);
+        return $res->withJson(["username"=>isset($_SESSION["username"]) ? $_SESSION["username"]: (isset($_SESSION["userid"]) ? $this->dao->getUsername($_SESSION["userid"]):null), "userid"=>isset($_SESSION["userid"]) ? $_SESSION["userid"]: 0, "isadmin"=>isset($_SESSION['isadmin']) ? $_SESSION['isadmin']: 0]);
     }
 
     public function login(Request $req, Response $res, array $args) {
         $post = $req->getParsedBody();
-        $row = $this->model->login($post["username"], $post["password"]);
+        $row = $this->dao->login($post["username"], $post["password"]);
         if($row === false) {
             return $res->withStatus(401)->withJson(["error"=>"Incorrect login."]);
         } else {
@@ -29,7 +29,7 @@ class UserController {
             if($row["isadmin"]==1) {
                 $_SESSION["isadmin"] = $row["isadmin"];
             }
-            return $res->withJson(["username"=>$this->model->getUsername($_SESSION["userid"]), "userid"=>$_SESSION["userid"], "isadmin"=>isset($_SESSION["isadmin"]) ? $_SESSION["isadmin"] : 0]);
+            return $res->withJson(["username"=>$this->dao->getUsername($_SESSION["userid"]), "userid"=>$_SESSION["userid"], "isadmin"=>isset($_SESSION["isadmin"]) ? $_SESSION["isadmin"] : 0]);
         }
     }
 
@@ -49,7 +49,7 @@ class UserController {
         } elseif($post["password"] != $post["password2"]) {
             return $res->withJson(["error"=>"Passwords do not match."]); 
         } else {
-            $result = $this->model->signup($post["username"], $post["password"]);
+            $result = $this->dao->signup($post["username"], $post["password"]);
             if($result === false) {
                 return $res->withJson(["error"=>"This username already exists, please choose another one."]);
             } else {

@@ -7,7 +7,7 @@ class PanoDao {
     }
 
     function getById($id) {
-        $stmt = $this->db->prepare("SELECT *,ST_X(the_geom) AS lon, ST_Y(the_geom) AS lat FROM panoramas WHERE id=?");
+        $stmt = $this->db->prepare("SELECT *,ST_X(the_geom) AS lon, ST_Y(the_geom) AS lat, userid, authorised FROM panoramas WHERE id=?");
         $stmt->execute([$id]);
         return $this->getRowOrNull($stmt);
     }
@@ -65,7 +65,7 @@ class PanoDao {
     function delete($id) {
         $stmt = $this->db->prepare("DELETE FROM panoramas WHERE id=?");
         $stmt->execute([$id]);
-        $file = OTV_RAW.UPLOADS."/$id.jpg";
+        $file = OTV_UPLOADS."/$id.jpg";
         if(file_exists($file)) {
             unlink($file);
         }

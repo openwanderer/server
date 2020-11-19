@@ -23,11 +23,7 @@ $container->set('db', function() {
 $view = new \Slim\Views\PhpRenderer('views');
 
 $app->get('/', function(Request $req, Response $res, array $args) use ($view) {
-	return $view->render($res, 'index.phtml', ["mode" => "basic"]);
-});
-
-$app->get('/nav', function(Request $req, Response $res, array $args) use ($view) {
-	return $view->render($res, "index.phtml", ["mode" => "nav"]);
+	return $view->render($res, 'index.html');
 });
 
 $setup_core_routes($app);

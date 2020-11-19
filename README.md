@@ -16,13 +16,15 @@ Any further changes to the current OpenTrailView - OTV360; repo [here](https://g
 Building the server and running the demo
 ----------------------------------------
 
-Dependencies are managed by Composer. Please use:
+You need [PHP](https://php,net) installed on your system, and a web server of some kind, such as [Apache](https://apache.org). If you have a Linux system you can easily install these using your package management system. If running Windows you might want to consider an all-in-one package such as [XAMPP](https://www.apachefriends.org/download.html) which provides both PHP and Apache. You also need to install [PostGIS](https://postgis.net) as well as PostgreSQL.
+
+Dependencies are managed by [Composer](https://getcomposer.org). Please use:
 
 `composer install`
 
 to install the dependencies.
 
-To run the demo you need to install the `jsapi` repository into the same root directory which contains this repository, and then:
+To run the demo app you need to install the `jsapi` repository into the same root directory which contains this repository, and then:
 
 ```
 cd js
@@ -44,3 +46,12 @@ $app->setBasePath('/openwanderer/server');
 after the `$app` object has been initialised. Then you can access in the browser via:
 
 `http://localhost/openwanderer/server`
+
+Demo app
+--------
+
+The demo app now provides a range of basic functionality. You can:
+
+- upload a set of panoramas and create a sequence from them;
+- view the closest pano to a given latitude and longitude;
+- view and navigate a sequence, for those panoramas which belong to a sequence.

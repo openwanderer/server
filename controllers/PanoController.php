@@ -10,21 +10,21 @@ require_once(dirname(__DIR__).'/models/PanoDao.php');
 
 
 class PanoController {
-    protected $uid, $model;
+    protected $uid, $dao;
 
     public function __construct(ContainerInterface $container) {
-        $this->uid = isset($_SESSION["userid"]) ? $_SESSION["userid"] : null;
-        $this->model = new PanoDao($container->get('db'));
+        $this->uid = $this->getUserId();
+        $this->dao = new PanoDao($container->get('db'));
     }
 
     function getById(Request $req, Response $res, array $args){ 
-        if(isset($_SESSION["isadmin"])) {
-            $row = $this->model->getById($args["id"]);
+        if($this->isAdminUser()) {
+            $row = $this->dao->getById($args["id"]);
         } else {
-            $row = $this->model->getByIdAuthorised($args["id"], $this->uid);
+            $row = $this->dao->getByIdAuthorised($args["id"], $this->uid);
         }
         if($row) {
-            $row["seqid"] = $this->model->getSequenceForPano($args["id"]);
+            $row["seqid"] = $this->dao->getSequenceForPano($args["id"]);
             return $res->withJson($row);
         } else {
         return $res->withStatus(404)->withJson(["error"=>"Cannot find pano with that ID or you are not authorised to view it."]);
@@ -35,7 +35,7 @@ class PanoController {
     function getNearest(Request $req, Response $res, array $args)  {
         if(preg_match("/^-?[\d\.]+$/", $args['lon']) &&
             preg_match("/^-?[\d\.]+$/", $args['lat'])) {
-            $row = $this->model->getNearest($args["lon"], $args["lat"]);
+            $row = $this->dao->getNearest($args["lon"], $args["lat"]);
         } else {
             $row=[];
         }
@@ -55,10 +55,10 @@ class PanoController {
                 }
                 if($valid) {
                     $rows = [];
-                    if(isset($_SESSION["isadmin"])) {
-                        $rows = $this->model->getByBbox($bb);
+                    if($this->isAdminUser()) {
+                        $rows = $this->dao->getByBbox($bb);
                     } else {
-                        $rows = $this->model->getByBboxAuthorised($bb, $this->uid);
+                        $rows = $this->dao->getByBboxAuthorised($bb, $this->uid);
                     }
                     $geojson = ["type"=>"FeatureCollection","features"=>[]];
                     foreach($rows as $row) {
@@ -76,11 +76,10 @@ class PanoController {
     }
 
     private function getPanosByUser(Request $req, Response $res, array $args, $sql="") {
-        $_SESSION["userid"] = 1;
-        if(!isset($_SESSION["userid"])) {    
+        if($this->uid === 0) {
             return $res->withStatus(401);
         } else {
-            $rows = $this->model->getPanosByCriterion("WHERE userid=? $sql", [$_SESSION["userid"]]);
+            $rows = $this->dao->getPanosByCriterion("WHERE userid=? $sql", [$this->getUserId()]);
             return $res->withJson($rows);
         }
     }
@@ -90,10 +89,10 @@ class PanoController {
     }
 
     function getUnauthorised(Request $req, Response $res, array $args) {
-        if(!isset($_SESSION["isadmin"])) {    
+        if(!$this->isAdminUser()) {    
             return $res->withStatus(401);
         } else {
-            $rows = $this->model->getPanosByCriterion("WHERE authorised=0");
+            $rows = $this->dao->getPanosByCriterion("WHERE authorised=0");
             return $res->withJson($rows);
         } 
     }
@@ -105,7 +104,7 @@ class PanoController {
     private function doRotate(Request $req, Response $res, $id) {
         if($this->authorisedToChange($id)) {
             $post = $req->getParsedBody();
-            $this->model->rotate($id, $post["poseheadingdegrees"]);
+            $this->dao->rotate($id, $post["poseheadingdegrees"]);
         } else {
             $res->withStatus(401);
         }
@@ -121,7 +120,7 @@ class PanoController {
             $post = $req->getParsedBody();
             if(preg_match("/^-?[\d\.]+$/", $post['lon']) &&
                 preg_match("/^-?[\d\.]+$/", $post['lat'])) {
-                $this->model->move($id, $post["lon"], $post["lat"]);
+                $this->dao->move($id, $post["lon"], $post["lat"]);
             } else {
                 $res->withStatus(400);    
             } 
@@ -139,7 +138,7 @@ class PanoController {
             if($this->authorisedToChange($id)) {
                 if(preg_match("/^-?[\d\.]+$/", $pano['lon']) &&
                     preg_match("/^-?[\d\.]+$/", $pano['lat'])) {
-                    $this->model->move($id, $post["lon"], $post["lat"]);
+                    $this->dao->move($id, $post["lon"], $post["lat"]);
                     $successful[] = ["id"=>$id,"lat"=>$pano['lat'],"lon"=>$pano['lon']];
                 } 
             }
@@ -149,14 +148,14 @@ class PanoController {
 
 
     private function authorisedToChange($panoid) {
-        $uid = isset($_SESSION["userid"]) ? $_SESSION["userid"]: $this->uid;
-        if(isset($_SESSION["isadmin"])) {
+        if($this->isAdminUser()) {
             return true;
-        } elseif($uid) {
-            return $this->model->authorisedToChange($panoid, $uid);
+        } elseif($this->uid) {
+            return $this->dao->authorisedToChange($panoid, $this->uid);
         } else {
             return false;
         }
+        return true;
     }
 
     private function setUserId($uid) {
@@ -164,7 +163,7 @@ class PanoController {
     }
 
     private function authorisedToUpload() {
-        return $this->uid !== null;
+        return $this->uid > 0 || $this->isAdminUser();
     }
 
     function deletePano(Request $req, Response $res, array $args) {
@@ -174,7 +173,7 @@ class PanoController {
     private function doDeletePano(Request $req, Response $res, $id) {
         if(ctype_digit($id)) {
             if($this->authorisedToChange($id)) {
-                $this->model->delete($id);
+                $this->dao->delete($id);
                 return $res->withJson(["id"=>$id]);
             } else {
                 return $res->withStatus(401)->withJson(["error"=>"not authorised to delete this pano"]);
@@ -187,7 +186,7 @@ class PanoController {
     function authorisePano(Request $req, Response $res, array $args) {
         if(ctype_digit($args["id"])) {
             if($this->authorisedToChange($args["id"])) {
-                $this->model->authorise($args["id"]);
+                $this->dao->authorise($args["id"]);
             } else {
                 return $res->withStatus(401);
             }
@@ -197,10 +196,9 @@ class PanoController {
     }
 
     function uploadPano(Request $req, Response $res, array $args) {
-        if(isset($_SESSION['userid']) && ctype_alnum($_SESSION['userid'])) {
-            $this->setUserId($_SESSION['userid']);
+        if($this->authorisedToUpload()) {
+            return $this->doUploadPano($req, $res, $args);
         }
-        return $this->doUploadPano($req, $res, $args);
     }
 
     private function doUploadPano(Request $req, Response $res, array $args) {
@@ -224,7 +222,7 @@ class PanoController {
                 if($size > MAX_FILE_SIZE * 1048576) {
                     $error = "Exceeded file size of ".MAX_FILE_SIZE." MB";
                 } else {
-                    $tmpName=$pano->file;
+                    $tmpName=$pano->getFilePath(); // Slim 4 update
                     $imageData = getimagesize($tmpName);
                     if($imageData===false || $imageData[2]!=IMAGETYPE_JPEG) {
                         $error = "Not a JPEG image!";
@@ -239,17 +237,17 @@ class PanoController {
                         $lat=$photosphere->getLatitude();
                         $lon=$photosphere->getLongitude();
                         if($lon!==false && $lat!==false && preg_match("/^-?[\d\.]+$/", $lon) && preg_match("/^-?[\d\.]+$/", $lat)) {
-                            $id = $this->model->insertPano($lon, $lat, $gpano && $heading !== false ? $heading: 0, $this->uid, $photosphere->getTimestamp());
+                            $id = $this->dao->insertPano($lon, $lat, $gpano && $heading !== false ? $heading: 0, $this->uid, $photosphere->getTimestamp());
                         } else {
                             $error = "No lat/lon information found in panorama. Not uploaded.";
                         }
                         if($id > 0) {
                             try {
-                                $result = $pano->moveTo(OTV_RAW_UPLOADS."/".$id.".jpg");
+                                $result = $pano->moveTo(OTV_UPLOADS."/".$id.".jpg");
                             } catch(Exception $e) {
                                 $authorisedCode = 500;
                                 $error = $e->getMessage();
-                                $this->model->delete($id);
+                                $this->dao->delete($id);
                             }
                         }
                     }
@@ -276,24 +274,57 @@ class PanoController {
         $panos = [];
         $seqid = 0;
         foreach($ids as $id) {    
-            $pano = $this->model->getById($id);
+            $pano = $this->dao->getById($id);
             if($pano !== null) {
                 $panos[] = $pano;    
             }
         }
         if(count($panos) > 0) {
-            $seqid = $this->model->createSequence($panos);
+            $seqid = $this->dao->createSequence($panos);
         }
         $res->getBody()->write($seqid);
         return $res->withStatus($seqid > 0 ? 200: 400);
     }
 
     public function getSequence(Request $req, Response $res, array $args) {
-        $feature = $this->model->getSequence($args["id"]);
+        $feature = $this->dao->getSequence($args["id"]);
         if($feature !== false) {
             return $res->withJson($feature);
         }
         return $res->withStatus(404);
+    }
+
+    public function getPanoImage(Request $req, Response $res, array $args) {
+        $row = $this->dao->getById($args["id"]);
+        if($row !== null) {
+            if($this->isAdminUser() || $row["authorised"]==1 || $this->uid == $row["userid"]) {
+                $file=OTV_UPLOADS."/$args[id].jpg";
+                $res->getBody()->write(file_get_contents($file));
+                return $res->withHeader("Content-Type", "image/jpg")
+                    ->withHeader("Content-Length", filesize($file))
+                    ->withHeader("Cache-control", "max-age=".(60*60*24*365))
+                    ->withHeader("Expires",gmdate(DATE_RFC1123, time()+60*60*24*365));
+            } else {
+                return $res->withStatus(401);
+            }
+        } else {
+            return $res->withStatus(404);
+        }
+    }
+
+    /* Override to provide admin checks - by default we assume anyone is an
+     * admin, this it to allow for easy use on an internal system or for a 
+     * demo, etc, without having to implement a login system.
+     */
+    private function isAdminUser() {
+        return true;
+    }
+
+    /* Override to get the current user ID. This might be provided by a 
+     * session variable, for instance.
+     */
+    private function getUserId() {
+        return 0;
     }
 }
 ?>

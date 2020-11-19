@@ -12,6 +12,7 @@ require_once('controllers/UserController.php');
 return function($app) {
     $app->get('/panorama/{id:[0-9]+}', \PanoController::class.":getById");
     $app->delete('/panorama/{id:[0-9]+}', \PanoController::class.":deletePano");
+    $app->get('/panorama/{id:[0-9]+}.jpg', \PanoController::class.":getPanoImage");
     $app->post('/panorama/{id}/authorise', \PanoController::class.":authorisePano");
     $app->get('/nearest/{lon}/{lat}', \PanoController::class.":getNearest"); 
     $app->get('/panos', \PanoController::class.":getByBbox"); 
