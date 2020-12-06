@@ -90,7 +90,7 @@ class PanoDao {
     }
 
 
-	function getSequence($seqid) {
+    function getSequence($seqid) {
         $stmt = $this->db->prepare("SELECT ST_AsText(p.the_geom) as geom, s.panoid FROM sequence_panos s, panoramas p WHERE s.panoid=p.id AND sequenceid=? ORDER BY s.id");
         $stmt->execute([$seqid]);
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -100,10 +100,11 @@ class PanoDao {
             return [
                 "panoid" => $row["panoid"],
                 "lon" => $m[1],
-                "lat" => $m[2]
+                "lat" => $m[2],
+                "alt" => 0 // for now
             ];
         } ,  $rows);
-	}
+    }
 
     function getSequenceGeom($seqid) {
         $stmt = $this->db->prepare("SELECT ST_AsGeoJSON(the_geom) AS json FROM sequence_geom WHERE id=?");
