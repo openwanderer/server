@@ -91,7 +91,7 @@ class PanoDao {
 
 
     function getSequence($seqid) {
-        $stmt = $this->db->prepare("SELECT ST_AsText(p.the_geom) as geom, s.panoid FROM sequence_panos s, panoramas p WHERE s.panoid=p.id AND sequenceid=? ORDER BY s.id");
+        $stmt = $this->db->prepare("SELECT ST_AsText(p.the_geom) as geom, p.poseheadingdegrees, s.panoid FROM sequence_panos s, panoramas p WHERE s.panoid=p.id AND sequenceid=? ORDER BY s.id");
         $stmt->execute([$seqid]);
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return array_map ( function($row) {
@@ -101,6 +101,7 @@ class PanoDao {
                 "panoid" => $row["panoid"],
                 "lon" => $m[1],
                 "lat" => $m[2],
+                "poseheadingdegrees" => (int)$row["poseheadingdegrees"],
                 "alt" => 0 // for now
             ];
         } ,  $rows);
