@@ -89,18 +89,28 @@ class PanoDao {
         return $seqid;
     }
 
-    function getSequence($seqid) {
+
+	function getSequence($seqid) {
+        $stmt = $this->db->prepare("SELECT ST_AsText(p.the_geom) as geom, s.panoid FROM sequence_panos s, panoramas p WHERE s.panoid=p.id AND sequenceid=? ORDER BY s.id");
+        $stmt->execute([$seqid]);
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return array_map ( function($row) {
+            $m = [];
+            preg_match("/POINT\(([\d\-\.]+) ([\d\-\.]+)\)/", $row["geom"], $m);
+            return [
+                "panoid" => $row["panoid"],
+                "lon" => $m[1],
+                "lat" => $m[2]
+            ];
+        } ,  $rows);
+	}
+
+    function getSequenceGeom($seqid) {
         $stmt = $this->db->prepare("SELECT ST_AsGeoJSON(the_geom) AS json FROM sequence_geom WHERE id=?");
         $stmt->execute([$seqid]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         if($row !== false) {
-            $feature = [ "type" => "Feature", "geometry" => json_decode($row["json"])];
-            $stmt2 = $this->db->prepare("SELECT panoid FROM sequence_panos WHERE sequenceid=? ORDER BY id");
-            $stmt2->execute([$seqid]);
-            $rows = $stmt2->fetchAll(PDO::FETCH_ASSOC);
-            $ids = array_map (function($row) { return $row["panoid"]; } , $rows);
-            $feature["properties"]["ids"] = $ids;
-            return $feature;
+            return [ "type" => "Feature", "geometry" => json_decode($row["json"])];
         }
         return false;
     }

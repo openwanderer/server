@@ -287,6 +287,7 @@ class PanoController {
     }
 
     public function getSequence(Request $req, Response $res, array $args) {
+        //$feature = $this->dao->getSequence($args["id"]);
         $feature = $this->dao->getSequence($args["id"]);
         if($feature !== false) {
             return $res->withJson($feature);
