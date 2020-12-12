@@ -1,8 +1,10 @@
-import * as OpenWanderer from './jsapi/index.js';
-import XHRPromise from './xhrpromise.js';
+const OpenWanderer = require('./jsapi');
+const XHRPromise = require('./xhrpromise');
+const exifr = require('exifr');
+const DemTiler = require('jsfreemaplib/demtiler');
 
 const parts = window.location.href.split('?');     
-const get = { }
+const get = { };
 
 if(parts.length==2) {         
     if(parts[1].endsWith('#')) {             
@@ -28,6 +30,9 @@ const navigator = new OpenWanderer.Navigator({
     loadSequence: seqProvider.getSequence.bind(seqProvider)
 });
 
+const tiler = new DemTiler('https://hikar.org/webapp/proxy.php?x={x}&y={y}&z={z}');
+tiler.setZoom(13);
+
 if(get.lat && get.lon) {
     navigator.findPanoramaByLonLat(get.lon, get.lat);
 } else {
@@ -43,6 +48,15 @@ document.getElementById('uploadBtn').addEventListener("click", async(e) => {
         for(let i=0; i<panofiles.length; i++) {
             const formData = new FormData();
             formData.append("file", panofiles[i]);
+            const exifdata = await getExif(panofiles[i]);
+            if(exifdata !== false) {
+                formData.append("lon", exifdata.longitude);
+                formData.append("lat", exifdata.latitude);
+                const sphMerc = tiler.lonLatToSphMerc(exifdata.longitude, exifdata.latitude);
+                const dem = await tiler.getData(sphMerc);
+                const ele = dem.getHeight(sphMerc[0], sphMerc[1]);
+                formData.append("ele", ele);
+            }
             const request = new XHRPromise({
                 url: '/panorama/upload',
                 progress: e => {
@@ -63,7 +77,9 @@ document.getElementById('uploadBtn').addEventListener("click", async(e) => {
                     alert(`HTTP error: status ${result.status}`);
                 } else if (json.id) {
                     panoids.push(json.id);
-                } 
+                } else {
+                    alert('Missing ID in panorama - this should not happen');
+                }
             } catch (e) {
                 alert(`Network error: ${e}`);
             }
@@ -93,3 +109,11 @@ function showProgress (pct, loaded, total) {
     document.getElementById('progress').value = Math.round(pct);
 }
 
+async function getExif(file) {         
+    try {             
+        const exif = await file.arrayBuffer().then(exifr.parse); 
+           return exif;         
+    } catch(e) {         
+        return false;
+    }
+}        

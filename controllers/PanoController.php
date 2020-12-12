@@ -206,6 +206,9 @@ class PanoController {
         $post = $req->getParsedBody();
         $error = $warning = null;
         $id = 0;
+        $lon = $lat = false;
+        $ele = 0;
+        $result = [];
         
         $errorCode = 400;
         if(!$this->authorisedToUpload()) {
@@ -227,6 +230,8 @@ class PanoController {
                     if($imageData===false || $imageData[2]!=IMAGETYPE_JPEG) {
                         $error = "Not a JPEG image!";
                     } else {
+                        $result["post"] =  $post;
+                        $ele = isset($post["ele"]) ? $post["ele"] : 0;
                         $photosphere = new Photosphere($tmpName);
                         $gpano = $photosphere->hasGPano();
                         if($gpano===false) {
@@ -234,10 +239,15 @@ class PanoController {
                         } else {
                             $heading = $photosphere->getGPanoAttribute('PoseHeadingDegrees');
                         }
-                        $lat=$photosphere->getLatitude();
-                        $lon=$photosphere->getLongitude();
+                        if(isset($post["lon"]) && isset($post["lat"])) {
+                            $lon = $post["lon"];
+                            $lat = $post["lat"];
+                        } else {
+                            $lat=$photosphere->getLatitude();
+                            $lon=$photosphere->getLongitude();
+                        }
                         if($lon!==false && $lat!==false && preg_match("/^-?[\d\.]+$/", $lon) && preg_match("/^-?[\d\.]+$/", $lat)) {
-                            $id = $this->dao->insertPano($lon, $lat, $gpano && $heading !== false ? $heading: 0, $this->uid, $photosphere->getTimestamp());
+                            $id = $this->dao->insertPano($lon, $lat, $ele, $gpano && $heading !== false ? $heading: 0, $this->uid, $photosphere->getTimestamp());
                         } else {
                             $error = "No lat/lon information found in panorama. Not uploaded.";
                         }
@@ -254,7 +264,6 @@ class PanoController {
                 }
             }
         }
-        $result = [];
         $authorisedCode = 200;
         if($error!==null) {
             $result["error"] = $error;
@@ -265,6 +274,12 @@ class PanoController {
                 $result["warning"] = $warning;
             }
             $result["id"] = $id;
+            if($lon !== false) {
+                $result["lon"] = $lon;
+            }
+            if($lat !== false) {
+                $result["lat"] = $lat;
+            }
         } 
         return $res->withStatus($authorisedCode)->withJson($result);
     }

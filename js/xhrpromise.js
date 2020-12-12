@@ -1,4 +1,3 @@
-
 class XHRPromise {
     constructor(options) {
         this.url = options.url;
@@ -21,5 +20,5 @@ class XHRPromise {
         });
     }
 }
-    
-export default XHRPromise;    
+  
+module.exports = XHRPromise; 

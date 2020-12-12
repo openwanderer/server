@@ -7,13 +7,13 @@ class PanoDao {
     }
 
     function getById($id) {
-        $stmt = $this->db->prepare("SELECT *,ST_X(the_geom) AS lon, ST_Y(the_geom) AS lat, userid, authorised FROM panoramas WHERE id=?");
+        $stmt = $this->db->prepare("SELECT *,ST_X(the_geom) AS lon, ST_Y(the_geom) AS lat, userid, ele, poseheadingdegrees FROM panoramas WHERE id=?");
         $stmt->execute([$id]);
         return $this->getRowOrNull($stmt);
     }
 
     function getByIdAuthorised($id, $uid) {
-        $stmt = $this->db->prepare("SELECT id,ST_X(the_geom) AS lon, ST_Y(the_geom) AS lat, poseheadingdegrees FROM panoramas WHERE id=:id AND (authorised=1 OR userid=:uid)");
+        $stmt = $this->db->prepare("SELECT id,ST_X(the_geom) AS lon, ST_Y(the_geom) AS lat, poseheadingdegrees, ele FROM panoramas WHERE id=:id AND (authorised=1 OR userid=:uid)");
         $stmt->execute([':id'=>$id, ':uid'=>$uid]);
         return $this->getRowOrNull($stmt);
     }
@@ -26,7 +26,7 @@ class PanoDao {
     }
 
     function getByBbox($bb) {
-        $stmt=$this->db->prepare("SELECT id, ST_X(the_geom) AS lon, ST_Y(the_geom) AS lat, poseheadingdegrees,userid FROM panoramas WHERE ST_X(the_geom) BETWEEN :w AND :e AND ST_Y(the_geom) BETWEEN :s AND :n");
+        $stmt=$this->db->prepare("SELECT id, ST_X(the_geom) AS lon, ST_Y(the_geom) AS lat, poseheadingdegrees,ele,userid FROM panoramas WHERE ST_X(the_geom) BETWEEN :w AND :e AND ST_Y(the_geom) BETWEEN :s AND :n");
         $stmt->execute([":w"=>$bb[0], ":s"=>$bb[1], ":e"=>$bb[2], ":n"=>$bb[3]]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -91,7 +91,7 @@ class PanoDao {
 
 
     function getSequence($seqid) {
-        $stmt = $this->db->prepare("SELECT ST_AsText(p.the_geom) as geom, p.poseheadingdegrees, s.panoid FROM sequence_panos s, panoramas p WHERE s.panoid=p.id AND sequenceid=? ORDER BY s.id");
+        $stmt = $this->db->prepare("SELECT ST_AsText(p.the_geom) as geom, p.poseheadingdegrees, p.ele, s.panoid FROM sequence_panos s, panoramas p WHERE s.panoid=p.id AND sequenceid=? ORDER BY s.id");
         $stmt->execute([$seqid]);
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return array_map ( function($row) {
@@ -101,8 +101,8 @@ class PanoDao {
                 "panoid" => $row["panoid"],
                 "lon" => $m[1],
                 "lat" => $m[2],
-                "poseheadingdegrees" => (int)$row["poseheadingdegrees"],
-                "alt" => 0 // for now
+                "ele" => (float)$row["ele"],
+                "poseheadingdegrees" => (int)$row["poseheadingdegrees"]
             ];
         } ,  $rows);
     }
@@ -117,9 +117,9 @@ class PanoDao {
         return false;
     }
 
-    function insertPano($lon, $lat, $heading, $uid, $timestamp) {
+    function insertPano($lon, $lat, $ele, $heading, $uid, $timestamp) {
         $geometry="ST_GeomFromText('POINT($lon $lat)',4326)";
-        $stmt = $this->db->query("INSERT INTO panoramas (the_geom,poseheadingdegrees,userid,timestamp,authorised)  VALUES ($geometry,$heading, '$uid',$timestamp, 0)");
+        $stmt = $this->db->query("INSERT INTO panoramas (the_geom,ele,poseheadingdegrees,userid,timestamp,authorised)  VALUES ($geometry,$ele,$heading, '$uid',$timestamp, 0)");
         $id = $this->db->lastInsertId();
         return $id;
     }
