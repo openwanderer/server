@@ -2,6 +2,7 @@ const OpenWanderer = require('./jsapi');
 const XHRPromise = require('./xhrpromise');
 const exifr = require('exifr');
 const DemTiler = require('jsfreemaplib/demtiler');
+const jsfreemaplib = require('jsfreemaplib');
 
 const parts = window.location.href.split('?');     
 const get = { };
@@ -27,7 +28,8 @@ const navigator = new OpenWanderer.Navigator({
         panoImg: '/panorama/{id}.jpg',
         nearest: '/nearest/{lon}/{lat}'
     },
-    loadSequence: seqProvider.getSequence.bind(seqProvider)
+    loadSequence: seqProvider.getSequence.bind(seqProvider),
+    gaNav: true
 });
 
 const tiler = new DemTiler('https://hikar.org/webapp/proxy.php?x={x}&y={y}&z={z}');
