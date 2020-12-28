@@ -19,17 +19,17 @@ if(parts.length==2) {
 }    
 
 const seqProvider = new OpenWanderer.SimpleSequenceProvider({
-    sequenceUrl: '/sequence/{id}'
+    sequenceUrl: 'sequence/{id}'
 });
 
 const navigator = new OpenWanderer.Navigator({
     api: { 
-        byId: '/panorama/{id}', 
-        panoImg: '/panorama/{id}.jpg',
-        nearest: '/nearest/{lon}/{lat}'
+        byId: 'panorama/{id}', 
+        panoImg: 'panorama/{id}.jpg',
+        nearest: 'nearest/{lon}/{lat}'
     },
     loadSequence: seqProvider.getSequence.bind(seqProvider),
-    gaNav: true
+    gaNav: false
 });
 
 const tiler = new DemTiler('https://hikar.org/webapp/proxy.php?x={x}&y={y}&z={z}');
@@ -60,7 +60,7 @@ document.getElementById('uploadBtn').addEventListener("click", async(e) => {
                 formData.append("ele", ele);
             }
             const request = new XHRPromise({
-                url: '/panorama/upload',
+                url: 'panorama/upload',
                 progress: e => {
                     const pct = Math.round(e.loaded / e.total * 100);
                     showProgress(pct, e.loaded, e.total);
@@ -88,7 +88,7 @@ document.getElementById('uploadBtn').addEventListener("click", async(e) => {
         }
         if(panoids.length > 0) {
             try { 
-                const response = await fetch('/sequence/create', {
+                const response = await fetch('sequence/create', {
                     method: 'POST',
                     body: JSON.stringify(panoids),
                     headers: {
