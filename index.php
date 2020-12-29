@@ -14,7 +14,6 @@ AppFactory::setContainer($container);
 $app = AppFactory::create();
 $app->addRoutingMiddleware();
 $app->addErrorMiddleware(true, true, true);
-$app->setBasePath('/ow/server');
 
 $container->set('db', function() {
     $conn = new PDO("pgsql:host=localhost;dbname=".DB_DBASE, DB_USER);

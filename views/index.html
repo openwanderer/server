@@ -22,6 +22,7 @@ input[type=text] {
 <script type='module' src='js/bundle.js'></script>
 </head>
 <body>
+
 <h1>OpenWanderer Demo App</h1>
 <p>You can upload panoramas and select a latitude/longitude or pano ID to navigate to.</p>
 
@@ -47,5 +48,32 @@ Select your file(s): <input type='file' id='panoFiles' multiple /><br />
 <p id='uploadStatus'></p>
 
 
+<svg height="1" width="1" style="position:absolute;top:-1px;left:-1px;">
+  <defs>
+    <radialGradient id="GAgradient1" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+      <stop offset="0%"   stop-color="rgba(255, 255, 255, 1.0)"/>
+      <stop offset="25%"  stop-color="rgba(255, 255, 255, 1.0)"/>
+      <stop offset="100%" stop-color="rgba(255, 255, 255, 0.4)"/>
+    </radialGradient>
+    <radialGradient id="GAgradient0" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+      <stop offset="0%"   stop-color="rgba(255, 255, 255, 0.5)"/>
+      <stop offset="100%" stop-color="rgba(255, 255, 255, 0.5)"/>
+    </radialGradient>
+    <linearGradient id="GAgradient0T" x2="0" y2="1">
+      <stop offset="0%"   stop-color="rgba(255, 255, 255, 0.35)"/>
+      <stop offset="100%" stop-color="rgba(255, 255, 255, 0.35)"/>
+    </linearGradient>
+    <linearGradient id="GAgradient2T" x2="0" y2="1">
+      <stop offset="0%"   stop-color="rgba(255, 255, 255, 0.35)"/>
+      <stop offset="10%"  stop-color="rgba(255, 255, 255, 0.35)"/>
+      <stop offset="100%" stop-color="rgba(255, 255, 255, 0.85)"/>
+    </linearGradient>
+    <linearGradient id="GAgradient3T" x2="0" y2="1">
+      <stop offset="0%"   stop-color="rgba(255, 255, 255, 0.85)"/>
+      <stop offset="90%"  stop-color="rgba(255, 255, 255, 0.35)"/>
+      <stop offset="100%" stop-color="rgba(255, 255, 255, 0.35)"/>
+    </linearGradient>
+  </defs>
+</svg>
 </body>
 </html>

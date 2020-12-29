@@ -29,7 +29,7 @@ const navigator = new OpenWanderer.Navigator({
         nearest: 'nearest/{lon}/{lat}'
     },
     loadSequence: seqProvider.getSequence.bind(seqProvider),
-    gaNav: false
+    gaNav: true
 });
 
 const tiler = new DemTiler('https://hikar.org/webapp/proxy.php?x={x}&y={y}&z={z}');
