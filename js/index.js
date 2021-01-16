@@ -26,10 +26,10 @@ const navigator = new OpenWanderer.Navigator({
     api: { 
         byId: 'panorama/{id}', 
         panoImg: 'panorama/{id}.jpg',
-        nearest: 'nearest/{lon}/{lat}'
+        nearest: 'nearest/{lon}/{lat}',
     },
-    loadSequence: seqProvider.getSequence.bind(seqProvider),
-    gaNav: true
+    splitPath: true,
+    loadSequence: seqProvider.getSequence.bind(seqProvider)
 });
 
 const tiler = new DemTiler('https://hikar.org/webapp/proxy.php?x={x}&y={y}&z={z}');
