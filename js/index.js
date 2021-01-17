@@ -35,11 +35,45 @@ const navigator = new OpenWanderer.Navigator({
 const tiler = new DemTiler('https://hikar.org/webapp/proxy.php?x={x}&y={y}&z={z}');
 tiler.setZoom(13);
 
+let origContent = "";
+
 if(get.lat && get.lon) {
     navigator.findPanoramaByLonLat(get.lon, get.lat);
 } else {
     navigator.loadPanorama(get.id || 1);
 }
+
+fetch('user/login')
+    .then(response => response.json())
+    .then(json => {
+        if(json.userid > 0) {
+            onLogin(json);
+        } else {
+            setupLoginBtn();
+        }
+    });
+
+
+
+document.getElementById('signup').addEventListener('click', async(e) => {
+
+    const response = await fetch('user/signup', {
+        method: 'POST',
+        body: JSON.stringify({
+            "username": document.getElementById('username').value,
+            "password": document.getElementById('password').value
+        }),
+        headers: {
+            'Content-Type' : 'application/json'
+        }
+    });
+    if(response.status != 200) {
+        alert(`Server error ${response.status}`);
+    } else {
+        const json = await response.json();
+        alert(json.error ? `Error: ${json.error}`: 'Signed up successfully.');
+    }
+});
 
 document.getElementById('uploadBtn').addEventListener("click", async(e) => {
     const panofiles = document.getElementById("panoFiles").files;
@@ -118,4 +152,51 @@ async function getExif(file) {
     } catch(e) {         
         return false;
     }
+}
+
+
+function setupLoginBtn() {
+    document.getElementById('login').addEventListener('click', async(e) => {
+
+        const response = await fetch('user/login', {
+            method: 'POST',
+            body: JSON.stringify({
+                "username": document.getElementById('username').value,
+                "password": document.getElementById('password').value
+            }),
+            headers: {
+                'Content-Type' : 'application/json'
+            }
+        });
+        if(response.status == 401) {
+            alert('Invalid login!');
+        } else {
+            onLogin(await response.json());
+        }
+    });
+}
+
+function onLogin(json) {
+    document.getElementById('upload').style.display = 'block';
+    console.log(JSON.stringify(json));
+    origContent = document.getElementById('logindiv').innerHTML;
+    document.getElementById('logindiv').innerHTML = '';
+    const newContent = document.createTextNode(`Logged in as ${json.username}`);
+    const logoutBtn = document.createElement('input');
+    logoutBtn.setAttribute('type', 'button');
+    logoutBtn.setAttribute('value', 'logout');
+    logoutBtn.addEventListener('click', e => {
+        fetch('user/logout', {
+                method: 'POST'
+        })
+        .then(onLogout);
+    });
+    document.getElementById('logindiv').appendChild(newContent);
+    document.getElementById('logindiv').appendChild(logoutBtn);
+}
+
+function onLogout() {
+    document.getElementById('logindiv').innerHTML = origContent;
+    setupLoginBtn();
+    document.getElementById('upload').style.display = 'none';
 }        

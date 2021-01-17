@@ -25,7 +25,7 @@ class UserController {
         if($row === false) {
             return $res->withStatus(401)->withJson(["error"=>"Incorrect login."]);
         } else {
-            $_SESSION["userid"] = $row["id"];
+            $_SESSION["userid"] = $row["userid"];
             if($row["isadmin"]==1) {
                 $_SESSION["isadmin"] = $row["isadmin"];
             }
@@ -46,7 +46,7 @@ class UserController {
             return $res->withJson(["error"=>"That is not a valid email address."]); 
         } elseif(strlen($post['password'])<8) {
             return $res->withJson(["error"=>"Password should be at least 8 characters."]); 
-        } elseif($post["password"] != $post["password2"]) {
+        } elseif(isset($post["password2"]) && $post["password"] != $post["password2"]) {
             return $res->withJson(["error"=>"Passwords do not match."]); 
         } else {
             $result = $this->dao->signup($post["username"], $post["password"]);

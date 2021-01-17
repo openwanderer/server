@@ -32,7 +32,7 @@ class UserDao {
 
     public function signup($username, $password) {
         $stmt = $this->db->prepare("SELECT * FROM users WHERE username=?");
-        $stmt->execute([$post["username"]]);
+        $stmt->execute([$username]);
         if($stmt->fetch()) {
             return false;
         } else {

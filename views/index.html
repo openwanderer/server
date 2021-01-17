@@ -24,8 +24,15 @@ input[type=text] {
 <body>
 
 <h1>OpenWanderer Demo App</h1>
-<p>You can upload panoramas and select a latitude/longitude or pano ID to navigate to.</p>
-
+<div id='logindiv'>
+Email address:
+<input id='username' />
+Password:
+<input id='password' type='password' />
+<input type='button' id='login' value='login' />
+<input type='button' id='signup' value='signup' />
+</div>
+<p>You can upload panoramas (if logged in) and select a latitude/longitude or pano ID to navigate to.</p>
 <form method="get">
 Lon: <input name="lon" type="text"/>
 Lat: <input name="lat" type="text" type="text"/>
@@ -37,6 +44,7 @@ Pano ID:<input name="id" type="text"/>
 <div id="pano" style="width: 800px; height: 600px"></div>
 
 
+<div id='upload' style='display: none'>
 <form method='post' enctype='multipart/form-data'>
 <fieldset style="width: 800px; border: 1px solid black; padding: 0px">
 Select your file(s): <input type='file' id='panoFiles' multiple /><br />
@@ -46,6 +54,7 @@ Select your file(s): <input type='file' id='panoFiles' multiple /><br />
 </fieldset>
 </form>
 <p id='uploadStatus'></p>
+</div>
 
 
 <!-- SVG developed by Eesger Toering / knoop.frl / Project GEO Archive -->
