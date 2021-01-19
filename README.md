@@ -1,7 +1,7 @@
-OpenWanderer / OTV-4
-====================
+OpenWanderer server
+===================
 
-This is the OpenWanderer server component. The code is partly based on that of OpenTrailView, but with some significant differences. To try and keep the platform "clean", the aim now will be to use purely sequence-based navigation on OpenWanderer, in which navigation from one pano to another is done by following an uploaded sequence. The OSM-based navigation of current OpenTrailView will not, at least for now, be included. The next version of OpenTrailView, OTV-4, will be based on OpenWanderer.
+This is the OpenWanderer server component. The code is partly based on that of OpenTrailView, but with some significant differences. To try and keep the platform "clean", the aim now will be to use purely sequence-based navigation on OpenWanderer, in which navigation from one pano to another is done by following an uploaded sequence. The OSM-based navigation of current OpenTrailView will not, at least for now, be included. 
 
 Licensing
 ---------
@@ -57,3 +57,5 @@ The demo app now provides a range of basic functionality. You can:
 - upload a set of panoramas and create a sequence from them;
 - view the closest pano to a given latitude and longitude;
 - view and navigate a sequence, for those panoramas which belong to a sequence.
+
+You now need to signup and login to access pano upload.
