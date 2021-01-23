@@ -1,9 +1,7 @@
 {
  "name": "openwanderer-newserver-demo",
- "version": "0.0.4",
+ "version": "0.0.5",
  "dependencies": {
-  "exifr": "^5.0.2",
-  "jsfreemaplib": "^0.4.0"
  },
  "scripts": {
   "build": "rm jsapi; ln -s ../../jsapi jsapi ; browserify index.js > bundle.js"

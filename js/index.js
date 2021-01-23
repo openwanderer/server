@@ -1,8 +1,5 @@
-const OpenWanderer = require('./jsapi');
-const XHRPromise = require('./xhrpromise');
-const exifr = require('exifr');
-const DemTiler = require('jsfreemaplib/demtiler');
-const jsfreemaplib = require('jsfreemaplib');
+import OpenWanderer from './jsapi/index.js';
+import XHRPromise from './xhrpromise.js';
 
 const parts = window.location.href.split('?');     
 const get = { };
@@ -31,9 +28,6 @@ const navigator = new OpenWanderer.Navigator({
     splitPath: true,
     loadSequence: seqProvider.getSequence.bind(seqProvider)
 });
-
-const tiler = new DemTiler('https://hikar.org/webapp/proxy.php?x={x}&y={y}&z={z}');
-tiler.setZoom(13);
 
 let origContent = "";
 
@@ -84,15 +78,6 @@ document.getElementById('uploadBtn').addEventListener("click", async(e) => {
         for(let i=0; i<panofiles.length; i++) {
             const formData = new FormData();
             formData.append("file", panofiles[i]);
-            const exifdata = await getExif(panofiles[i]);
-            if(exifdata !== false) {
-                formData.append("lon", exifdata.longitude);
-                formData.append("lat", exifdata.latitude);
-                const sphMerc = tiler.lonLatToSphMerc(exifdata.longitude, exifdata.latitude);
-                const dem = await tiler.getData(sphMerc);
-                const ele = dem.getHeight(sphMerc[0], sphMerc[1]);
-                formData.append("ele", ele);
-            }
             const request = new XHRPromise({
                 url: 'panorama/upload',
                 progress: e => {
@@ -144,16 +129,6 @@ function showProgress (pct, loaded, total) {
         pct > 0 ? `Uploaded ${loaded}, total: ${total} (${pct}%)` : "";
     document.getElementById('progress').value = Math.round(pct);
 }
-
-async function getExif(file) {         
-    try {             
-        const exif = await file.arrayBuffer().then(exifr.parse); 
-           return exif;         
-    } catch(e) {         
-        return false;
-    }
-}
-
 
 function setupLoginBtn() {
     document.getElementById('login').addEventListener('click', async(e) => {

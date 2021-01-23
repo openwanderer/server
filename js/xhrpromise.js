@@ -21,4 +21,4 @@ class XHRPromise {
     }
 }
   
-module.exports = XHRPromise; 
+export default XHRPromise;
