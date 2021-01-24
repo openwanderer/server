@@ -66,7 +66,7 @@ class PanoController {
                                 ["type"=>"Point",
                                  "coordinates"=>[$row['lon'],$row['lat']]],
                             'properties'=>
-                                ['poseheadingdegrees'=>$row['poseheadingdegrees'],'id'=>$row['id'], "userid"=>$row['userid']]];
+                                ['pan'=>$row['pan'],'id'=>$row['id'], "userid"=>$row['userid']]];
                         $geojson["features"][] = $f;
                     }
                     return $res->withJson($geojson);
@@ -104,7 +104,7 @@ class PanoController {
     private function doRotate(Request $req, Response $res, $id) {
         if($this->authorisedToChange($id)) {
             $post = $req->getParsedBody();
-            $this->dao->rotate($id, $post["poseheadingdegrees"]);
+            $this->dao->rotate($id, $post["pan"], $post["tilt"], $post["roll"]);
         } else {
             $res->withStatus(401);
         }

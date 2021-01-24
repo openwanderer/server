@@ -123,6 +123,11 @@ document.getElementById('uploadBtn').addEventListener("click", async(e) => {
     }
 });
 
+document.getElementById("anticw").addEventListener("click", rotatePano.bind(this, -5, 'pan'));
+document.getElementById("cw").addEventListener("click", rotatePano.bind(this, 5, 'pan'));
+document.getElementById('up').addEventListener('click', rotatePano.bind(this, -5, 'tilt'));
+document.getElementById('down').addEventListener('click', rotatePano.bind(this, 5, 'tilt'));
+document.getElementById('save').addEventListener('click', saveRotation);
 
 function showProgress (pct, loaded, total) {
     document.getElementById('uploadProgress').innerHTML = 
@@ -174,4 +179,28 @@ function onLogout() {
     document.getElementById('logindiv').innerHTML = origContent;
     setupLoginBtn();
     document.getElementById('upload').style.display = 'none';
-}        
+}
+
+function rotatePano(ang, component) {
+    navigator.viewer.rotate(ang, component);
+}
+       
+function saveRotation() {
+    const orientations = Object.assign({}, navigator.viewer.orientation);
+    Object.keys(orientations).map ( k => { 
+        orientations[k] *= 180/Math.PI; 
+    });
+    fetch(`/panorama/${navigator.curPanoId}/rotate`, {
+        method: 'POST',
+        body: JSON.stringify(orientations),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+        alert(response.status == 200 ? 'Saved new rotation': `HTTP error: ${response.status}`);
+    })
+    .catch(e => {
+        alert(`ERROR: ${e}`);
+    });
+} 
