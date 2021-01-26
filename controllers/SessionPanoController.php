@@ -19,11 +19,11 @@ class SessionPanoController extends PanoController {
         parent::__construct($c);
     }
 
-    public function isAdminUser() {
+    protected function isAdminUser() {
         return isset($_SESSION["isadmin"]) && $_SESSION["isadmin"] == 1;
     }
 
-    public function getUserId() {
+    protected function getUserId() {
         return isset($_SESSION["userid"]) ? $_SESSION["userid"] : 0;
     }
 }

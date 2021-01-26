@@ -56,7 +56,7 @@ class PanoDao {
     }
 
     function authorisedToChange($panoid, $uid) {
-          $stmt = $this->db->prepare("SELECT * FROM panoramas WHERE id=?");
+        $stmt = $this->db->prepare("SELECT * FROM panoramas WHERE id=?");
         $stmt->execute([$panoid]);
         $row = $stmt->fetch();
         return $row["userid"]==$uid;

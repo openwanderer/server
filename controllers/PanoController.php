@@ -77,7 +77,7 @@ class PanoController {
 
     private function getPanosByUser(Request $req, Response $res, array $args, $sql="") {
         if($this->uid === 0) {
-            return $res->withStatus(401);
+            return $res->withStatus(401)->withJson(["error"=>"not logged in"]);
         } else {
             $rows = $this->dao->getPanosByCriterion("WHERE userid=? $sql", [$this->getUserId()]);
             return $res->withJson($rows);
@@ -86,15 +86,6 @@ class PanoController {
 
     function getAllByUser(Request $req, Response $res, array $args) {
         return $this->getPanosByUser($req, $res, $args);
-    }
-
-    function getUnauthorised(Request $req, Response $res, array $args) {
-        if(!$this->isAdminUser()) {    
-            return $res->withStatus(401);
-        } else {
-            $rows = $this->dao->getPanosByCriterion("WHERE authorised=0");
-            return $res->withJson($rows);
-        } 
     }
 
     function rotate (Request $req, Response $res, array $args) {
@@ -106,7 +97,7 @@ class PanoController {
             $post = $req->getParsedBody();
             $this->dao->rotate($id, $post["pan"], $post["tilt"], $post["roll"]);
         } else {
-            $res->withStatus(401);
+           return $res->withStatus(401)->withJson(["error"=>"not authorised to rotate"]);
         }
         return $res;
     }
@@ -122,10 +113,10 @@ class PanoController {
                 preg_match("/^-?[\d\.]+$/", $post['lat'])) {
                 $this->dao->move($id, $post["lon"], $post["lat"]);
             } else {
-                $res->withStatus(400);    
+                $res->withStatus(400)->withJson(["error"=>"Invalid input"]);
             } 
         } else {
-            $res->withStatus(401);
+           return $res->withStatus(401)->withJson(["error"=>"not authorised to move"]);
         }
         return $res;
     }
@@ -155,7 +146,6 @@ class PanoController {
         } else {
             return false;
         }
-        return true;
     }
 
     private function setUserId($uid) {
@@ -183,18 +173,6 @@ class PanoController {
         }
     }
     
-    function authorisePano(Request $req, Response $res, array $args) {
-        if(ctype_digit($args["id"])) {
-            if($this->authorisedToChange($args["id"])) {
-                $this->dao->authorise($args["id"]);
-            } else {
-                return $res->withStatus(401);
-            }
-        } else {
-            return $res->withStatus(400);
-        }
-    }
-
     function uploadPano(Request $req, Response $res, array $args) {
         if($this->authorisedToUpload()) {
             return $this->doUploadPano($req, $res, $args);
@@ -307,7 +285,7 @@ class PanoController {
         if($feature !== false) {
             return $res->withJson($feature);
         }
-        return $res->withStatus(404);
+        return $res->withStatus(404)->withJson(["error"=>"no sequence with that id"]);
     }
 
     public function getPanoImage(Request $req, Response $res, array $args) {
@@ -321,10 +299,10 @@ class PanoController {
                     ->withHeader("Cache-control", "max-age=".(60*60*24*365))
                     ->withHeader("Expires",gmdate(DATE_RFC1123, time()+60*60*24*365));
             } else {
-                return $res->withStatus(401);
+                return $res->withStatus(401)->withJson(["error"=>"not authorised to access image"]);
             }
         } else {
-            return $res->withStatus(404);
+            return $res->withStatus(404)->withJson(["error"=>"image not found"]);
         }
     }
 
@@ -332,14 +310,14 @@ class PanoController {
      * admin, this it to allow for easy use on an internal system or for a 
      * demo, etc, without having to implement a login system.
      */
-    private function isAdminUser() {
+    protected function isAdminUser() {
         return true;
     }
 
     /* Override to get the current user ID. This might be provided by a 
      * session variable, for instance.
      */
-    private function getUserId() {
+    protected function getUserId() {
         return 0;
     }
 }
