@@ -26,6 +26,7 @@ const navigator = new OpenWanderer.Navigator({
         nearest: 'nearest/{lon}/{lat}',
     },
     splitPath: true,
+    svgEffects: true,
     loadSequence: seqProvider.getSequence.bind(seqProvider)
 });
 
