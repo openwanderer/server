@@ -367,5 +367,9 @@ input[type=text], input[type=password] {
 }
 
 #upload {
-	background-color: #aa5500;
+    background-color: #aa5500;
+}
+
+.psv-loader {
+    background-color: white;
 }

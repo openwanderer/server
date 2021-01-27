@@ -19,5 +19,5 @@ const app = new OpenWandererApp();
 if(get.lat && get.lon) {
     app.navigator.findPanoramaByLonLat(get.lon, get.lat);
 } else {
-    app.navigator.loadPanorama(get.id || 1);
+    app.navigator.loadPanorama(get.id || 4);
 }

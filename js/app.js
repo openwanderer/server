@@ -290,8 +290,10 @@ class OpenWandererApp {
     setupRotation() {
         document.getElementById("anticw").addEventListener("click", this.rotatePano.bind(this, -5, 'pan'));
         document.getElementById("cw").addEventListener("click", this.rotatePano.bind(this, 5, 'pan'));
-        document.getElementById('up').addEventListener('click', this.rotatePano.bind(this, -5, 'tilt'));
-        document.getElementById('down').addEventListener('click', this.rotatePano.bind(this, 5, 'tilt'));
+        document.getElementById('tiltminus').addEventListener('click', this.rotatePano.bind(this, -5, 'tilt'));
+        document.getElementById('tiltplus').addEventListener('click', this.rotatePano.bind(this, 5, 'tilt'));
+        document.getElementById('rollminus').addEventListener('click', this.rotatePano.bind(this, -5, 'roll'));
+        document.getElementById('rollplus').addEventListener('click', this.rotatePano.bind(this, 5, 'roll'));
         document.getElementById('save').addEventListener('click', this.saveRotation.bind(this));
     }       
 
@@ -304,7 +306,7 @@ class OpenWandererApp {
         Object.keys(orientations).map ( k => { 
             orientations[k] *= 180/Math.PI; 
         });
-        fetch(`/panorama/${this.navigator.curPanoId}/rotate`, {
+        fetch(`panorama/${this.navigator.curPanoId}/rotate`, {
             method: 'POST',
             body: JSON.stringify(orientations),
             headers: {

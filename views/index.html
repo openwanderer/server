@@ -3,17 +3,8 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>OpenWanderer</title>
-<!--
-<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" />
--->
 <link rel='stylesheet' type='text/css' href='css/otv.css' />
 
-<!--
-<script type='text/javascript' src='https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js'></script>
-<link rel='stylesheet' type='text/css' href='https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css' />
--->
-<link rel='stylesheet' type='text/css' href='css/photo-sphere-viewer.css' />
-<link rel='stylesheet' type='text/css' href='css/markers.css' />
 <link rel='stylesheet' href='https://unpkg.com/leaflet@1.6.0/dist/leaflet.css'/>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photo-sphere-viewer@4/dist/photo-sphere-viewer.min.css"/>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photo-sphere-viewer@4/dist/plugins/markers.min.css"/>
@@ -61,11 +52,17 @@
         </div>
         <div id='map'></div>
 <div id='upload' style='display: none'>
-Adjust pan/tilt of panorama:
+<strong>Adjust panorama</strong>
+Pan:
 <input id='anticw' type='button' value='&larr;' />
 <input id='cw' type='button' value='&rarr;' />
-<input id='up' type='button' value='&uarr;' />
-<input id='down' type='button' value='&darr;' />
+Tilt:
+<input id='tiltminus' type='button' value='-' />
+<input id='tiltplus' type='button' value='+' />
+Roll:
+<input id='rollminus' type='button' value='-' />
+<input id='rollplus' type='button' value='+' />
+
 <input id='save' type='button' value='Save to server' />
 <br />
 <form method='post' enctype='multipart/form-data'>
