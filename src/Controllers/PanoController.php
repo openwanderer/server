@@ -1,20 +1,17 @@
 <?php
 
+namespace OpenWanderer\Controllers;
+
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
 use \Psr\Container\ContainerInterface;
-
-
-require_once(dirname(__DIR__).'/models/Photosphere.php');
-require_once(dirname(__DIR__).'/models/PanoDao.php');
-
 
 class PanoController {
     protected $uid, $dao;
 
     public function __construct(ContainerInterface $container) {
         $this->uid = $this->getUserId();
-        $this->dao = new PanoDao($container->get('db'));
+        $this->dao = new \OpenWanderer\Dao\PanoDao($container->get('db'));
     }
 
     function getById(Request $req, Response $res, array $args){ 
@@ -197,11 +194,11 @@ class PanoController {
         } else {
             $pano= $files['file'];
             if($pano->getError() != UPLOAD_ERR_OK) {
-                $error = "No file uploaded. Your file probably exceeds the max file size of ". MAX_FILE_SIZE. "MB. Error code=". $pano->getError();
+                $error = "No file uploaded. Your file probably exceeds the max file size of ". $_ENV["MAX_FILE_SIZE"]. "MB. Error code=". $pano->getError();
             } else {
                 $size = $pano->getSize();    
-                if($size > MAX_FILE_SIZE * 1048576) {
-                    $error = "Exceeded file size of ".MAX_FILE_SIZE." MB";
+                if($size > $_ENV["MAX_FILE_SIZE"] * 1048576) {
+                    $error = "Exceeded file size of ".$_ENV["MAX_FILE_SIZE"]." MB";
                 } else {
                     $tmpName=$pano->getFilePath(); // Slim 4 update
                     $imageData = getimagesize($tmpName);
@@ -231,7 +228,7 @@ class PanoController {
                         }
                         if($id > 0) {
                             try {
-                                $result = $pano->moveTo(OTV_UPLOADS."/".$id.".jpg");
+                                $result = $pano->moveTo($_ENV["OTV_UPLOADS"]."/".$id.".jpg");
                             } catch(Exception $e) {
                                 $authorisedCode = 500;
                                 $error = $e->getMessage();
@@ -292,7 +289,7 @@ class PanoController {
         $row = $this->dao->getById($args["id"]);
         if($row !== null) {
             if($this->isAdminUser() || $row["authorised"]==1 || $this->uid == $row["userid"]) {
-                $file=OTV_UPLOADS."/$args[id].jpg";
+                $file=$_ENV["OTV_UPLOADS"]."/$args[id].jpg";
                 $res->getBody()->write(file_get_contents($file));
                 return $res->withHeader("Content-Type", "image/jpg")
                     ->withHeader("Content-Length", filesize($file))

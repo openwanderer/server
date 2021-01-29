@@ -7,11 +7,9 @@
  * session variables which match those in the user management system.
  */
 
+namespace OpenWanderer\Controllers;
 
 use \Psr\Container\ContainerInterface;
-
-require_once(dirname(__DIR__).'/controllers/PanoController.php');
-
 
 class SessionPanoController extends PanoController {
 

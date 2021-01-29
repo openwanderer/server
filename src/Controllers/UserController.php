@@ -1,18 +1,17 @@
 <?php
 
+namespace OpenWanderer\Controllers;
+
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
 use \Psr\Container\ContainerInterface;
-
-require_once('defines.php');
-require_once(dirname(__DIR__).'/models/UserDao.php');
 
 class UserController {
 
     protected $dao;
 
     public function __construct(ContainerInterface $container) {
-        $this->dao = new UserDao($container->get('db'));
+        $this->dao = new \OpenWanderer\Dao\UserDao($container->get('db'));
     }
 
     public function getLogin(Request $req, Response $res, array $args){

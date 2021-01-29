@@ -1,9 +1,22 @@
 {
+    "name" : "openwanderer/openwanderer",
+    "description" :"OpenWanderer is a project to create a 100% free and open source panoramas platform. This is the server package.",
     "require": {
+        "php": ">=7.2",
         "slim/slim": "^4.5.0",
         "slim/psr7": "^1.2.0",
         "slim/http" : "^1.0",
         "slim/php-view" : "^2.2",
-        "php-di/php-di": "^6.1"
-    }
+        "php-di/php-di": "^6.1",
+        "vlucas/phpdotenv": "^5.3"
+    },
+    "keywords": ["panoramas", "360"],
+	"license": "LGPL3",
+	"homepage" : "https://github.com/openwanderer/server",
+	"autoload": {
+		"psr-4": {
+			"OpenWanderer\\": "src/"
+		},
+		"files": ["src/routes/core_routes.php", "src/routes/login_routes.php"]
+	}
 }

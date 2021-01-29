@@ -1,4 +1,6 @@
 <?php
+namespace OpenWanderer\Dao;
+
 class Photosphere
 {
     private $lat, $lon, $gpano;
