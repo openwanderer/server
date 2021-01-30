@@ -31,13 +31,13 @@ The following API endpoints are available with an OpenWanderer server. Note that
 
 These endpoints are available whether `auth` is `true` or `false`:
 
-`GET /panorama/{id:[0-9]+}` - retrieves information about a panorama. Returns a JSON object containing `id`, `lon`, `lat`, `ele` (elevation), `seqid` (the ID of the sequence it belongs to, if it does) and the three rotation angles for the panorama: `pan`, `tilt` and `roll`.
+`GET /panorama/{id:[0-9]+}` - retrieves information about a panorama. Returns a JSON object containing `id`, `lon`, `lat`, `ele` (elevation), `seqid` (the ID of the sequence it belongs to, if it does) and the three rotation angles for the panorama: `pan`, `tilt` and `roll`.  In addition, if `auth` is set to true, the panorama has to be authorised (the `authorised` field in the database set to 1) for it to be accessible to users other than its owner or the administrator. This is to allow for operations such as face or license-plate blurring, which will soon be added to the [bot](https://github.com/openwanderer/server-bot). So if you want all panoramas to be visible immediately, you should set `auth` to `false`.
 
-`GET /panorama/{id:[0-9]+}.jpg` - retrieves the actual panorama with the given ID.
+`GET /panorama/{id:[0-9]+}.jpg` - retrieves the actual panorama with the given ID. Again, the panorama has to be authorised to be visible to non-owner or non-admin users if `auth` is set to `true`.
 
 `DELETE /panorama/{id:[0-9]+}` - deletes the given panorama. If `auth` was set to `true`, only administrators or panorama owners may delete it; otherwise, 401 is returned.
 
-`GET /nearest/{lon]/{lat}/` - will retrieve the nearest panorama to a given latitude and longitude.
+`GET /nearest/{lon]/{lat}` - will retrieve the nearest panorama to a given latitude and longitude.
 
 `GET /panos` - retrieves panoramas by bounding box. Expects a query string parameter `bbox` containing a comma-separated list of bounding box parameters in order west, south, east and north.
 
@@ -55,13 +55,13 @@ These endpoints are available whether `auth` is `true` or `false`:
 
 These endpoints are only available if `auth` is `true`:
 
-`GET /login` - gets login information about the current user, as a JSON object containing `username`, `userid` and `isadmin` fields. If the user is not logged in, `username` will be `null` and the other fields will be 0.
+`GET /user/login` - gets login information about the current user, as a JSON object containing `username`, `userid` and `isadmin` fields. If the user is not logged in, `username` will be `null` and the other fields will be 0.
 
-`POST /login` - logs in a user and sets a session variable `userid`. Expects `username` and `password` POST fields. Returns a JSON object, containing `username`, `userid` and `isadmin` fields (on success) or an `error` field (on error).
+`POST /user/login` - logs in a user and sets a session variable `userid`. Expects `username` and `password` POST fields. Returns a JSON object, containing `username`, `userid` and `isadmin` fields (on success) or an `error` field (on error).
 
-`POST /logout` - logs out a user by destroying the session.
+`POST /user/logout` - logs out a user by destroying the session.
 
-`POST /signup` - signs up a new user. Expects `username`, `password` and `password` POST fields. Performs validation, such as checking that the `username` is an email address (this can be used for example to perform forgotten password functionality, though this is not available by default), checks the password is at least 8 characters, check the two password fields match, and check a user of that username has not signed up already. Returns a JSON object, with a `username` field (on success) or `error` field (on error).
+`POST /user/signup` - signs up a new user. Expects `username`, `password` and `password` POST fields. Performs validation, such as checking that the `username` is an email address (this can be used for example to perform forgotten password functionality, though this is not available by default), checks the password is at least 8 characters, check the two password fields match, and check a user of that username has not signed up already. Returns a JSON object, with a `username` field (on success) or `error` field (on error).
 
 `GET /panos/mine` - returns the panoramas belonging to the currently logged-in user, as JSON, as an array of JSON objects as described in `GET /panorama/{id}` above. Returns 401 if not logged in.
 

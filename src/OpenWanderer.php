@@ -35,7 +35,7 @@ class OpenWanderer {
         });
 
 
-        $setup_core_routes($app);
+        $setup_core_routes($app, !empty($options["auth"]));
 
         if(!empty($options["auth"])) {
             $setup_login_routes($app);

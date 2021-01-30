@@ -260,20 +260,24 @@ class PanoController {
     }
 
     public function createSequence(Request $req, Response $res, array $args) {
-        $ids = $req->getParsedBody();
-        $panos = [];
-        $seqid = 0;
-        foreach($ids as $id) {    
-            $pano = $this->dao->getById($id);
-            if($pano !== null) {
-                $panos[] = $pano;    
+        if($this->authorisedToUpload()) {
+            $ids = $req->getParsedBody();
+            $panos = [];
+            $seqid = 0;
+            foreach($ids as $id) {    
+                $pano = $this->dao->getById($id);
+                if($pano !== null) {
+                    $panos[] = $pano;    
+                }
             }
+            if(count($panos) > 0) {
+                $seqid = $this->dao->createSequence($panos);
+            }
+            $res->getBody()->write($seqid);
+            return $res->withStatus($seqid > 0 ? 200: 400);
+        } else {
+            return $res->withStatus(401)->withJson(["error" => "Not authorised to create sequence."]);
         }
-        if(count($panos) > 0) {
-            $seqid = $this->dao->createSequence($panos);
-        }
-        $res->getBody()->write($seqid);
-        return $res->withStatus($seqid > 0 ? 200: 400);
     }
 
     public function getSequence(Request $req, Response $res, array $args) {
