@@ -31,7 +31,7 @@ class OpenWanderer {
         $view = new \Slim\Views\PhpRenderer('views');
 
         $app->get('/', function(Request $req, Response $res, array $args) use ($view) {
-            return $view->render($res, 'index.html');
+            return $view->render($res, empty($options['mainView']) ? 'index.html': $options['mainView']);
         });
 
 

@@ -22,7 +22,9 @@ $app->run();
 ?>
 ```
 
-Note the use of the `OpenWanderer::createApp()` static method. This takes as an argument an associative array of options. Currently there is only one option: `auth`, which controls whether a login is needed to perform sensitive tasks (e.g. panorama upload, panorama editing or deletion). The method returns a `\Slim\App` object which can then be further manipulated if needed.
+Note the use of the `OpenWanderer::createApp()` static method. This takes as an argument an associative array of options. Currently there is are two options: 
+- `auth`, which controls whether a login is needed to perform sensitive tasks (e.g. panorama upload, panorama editing or deletion). The method returns a `\Slim\App` object which can then be further manipulated if needed.
+- `mainView`, the name of the main HTML view for the application, which should be located in the `views` subdirectory of the root directory of your application. If not specified, `index.html` will be used.
 
 API endpoints
 -------------
