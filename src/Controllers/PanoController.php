@@ -207,7 +207,7 @@ class PanoController {
                     } else {
                         $result["post"] =  $post;
                         $ele = isset($post["ele"]) ? $post["ele"] : 0;
-                        $photosphere = new Photosphere($tmpName);
+                        $photosphere = new \OpenWanderer\Dao\Photosphere($tmpName);
                         $gpano = $photosphere->hasGPano();
                         if($gpano===false) {
                             $warning="no XMP tags, you'll later need to orient this manually.";
