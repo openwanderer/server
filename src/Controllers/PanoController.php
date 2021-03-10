@@ -63,7 +63,7 @@ class PanoController {
                                 ["type"=>"Point",
                                  "coordinates"=>[$row['lon'],$row['lat']]],
                             'properties'=>
-                                ['pan'=>$row['pan'],'id'=>$row['id'], "userid"=>$row['userid']]];
+                                ['poseheadingdegrees'=>$row['poseheadingdegrees'],"pancorrection"=>$row["pancorrection"],'id'=>$row['id'], "userid"=>$row['userid']]];
                         $geojson["features"][] = $f;
                     }
                     return $res->withJson($geojson);
