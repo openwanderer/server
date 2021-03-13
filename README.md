@@ -33,7 +33,7 @@ The following API endpoints are available with an OpenWanderer server. Note that
 
 These endpoints are available whether `auth` is `true` or `false`:
 
-`GET /panorama/{id:[0-9]+}` - retrieves information about a panorama. Returns a JSON object containing `id`, `lon`, `lat`, `ele` (elevation), `seqid` (the ID of the sequence it belongs to, if it does) and the three rotation angles for the panorama: `pan`, `tilt` and `roll`.  In addition, if `auth` is set to true, the panorama has to be authorised (the `authorised` field in the database set to 1) for it to be accessible to users other than its owner or the administrator. This is to allow for operations such as face or license-plate blurring, which will soon be added to the [bot](https://github.com/openwanderer/server-bot). So if you want all panoramas to be visible immediately, you should set `auth` to `false`.
+`GET /panorama/{id:[0-9]+}` - retrieves information about a panorama. Returns a JSON object containing `id`, `lon`, `lat`, `ele` (elevation), `seqid` (the ID of the sequence it belongs to, if it does), `poseheadingdegrees` (the XMP PoseHeadingDegrees property, i.e. bearing of the panorama's centre point, if present) and corrections for the three rotation angles for the panorama: `pancorrection`, `tiltcorrection` and `rollcorrection` (note that these are *corrections*, not absolute values, i.e. the amount which the panorama needs to be rotated to be in its correct orientation if the inherent XMP data is inaccurate).  In addition, if `auth` is set to true, the panorama has to be authorised (the `authorised` field in the database set to 1) for it to be accessible to users other than its owner or the administrator. This is to allow for operations such as face or license-plate blurring, which will soon be added to the [bot](https://github.com/openwanderer/server-bot). So if you want all panoramas to be visible immediately, you should set `auth` to `false`.
 
 `GET /panorama/{id:[0-9]+}.jpg` - retrieves the actual panorama with the given ID. Again, the panorama has to be authorised to be visible to non-owner or non-admin users if `auth` is set to `true`.
 
@@ -43,7 +43,7 @@ These endpoints are available whether `auth` is `true` or `false`:
 
 `GET /panos` - retrieves panoramas by bounding box. Expects a query string parameter `bbox` containing a comma-separated list of bounding box parameters in order west, south, east and north.
 
-`POST /panorama/{id:[0-9]+}/rotate` - sets the pan, tilt and roll to the values supplied in a JSON object containing `pan`, `tilt` and `roll` fields, sent in the request body. If `auth` is set to `true`, only the panorama owner or administrators can perform this operation, otherwise 401 is returned.
+`POST /panorama/{id:[0-9]+}/rotate` - sets the pan, tilt and roll corrections to the values supplied in a JSON object containing `pan`, `tilt` and `roll` fields, sent in the request body. If `auth` is set to `true`, only the panorama owner or administrators can perform this operation, otherwise 401 is returned.
 
 `POST /panorama/{id:[0-9]+/move` - moves the panorama position to the given latitude and longitude, supplied as `lat` and `lon` fields within a JSON object sent in the request body. If `auth` is set to `true`, only the panorama owner or administrators can perform this operation, otherwise 401 is returned.
 
@@ -78,10 +78,16 @@ OpenWanderer uses the `.env` file format to control environment variables. You s
 - `DB_DBASE` - the database holding the panoramas.
 - `BASE_PATH` (optional) - set to the path (relative to your server root) holding your OpenWanderer app. If omitted, it is assumed the app is in your server root.
 
-Example app
------------
+Example apps
+------------
 
-A full working example app is available in [this repository](https://github.com/openwanderer/example-app). It contains an example `.env` file, `.env-example`, which you need to copy as a `.env` file and edit accordingly.
+A range of example apps are available in [this repository](https://github.com/openwanderer/example-app). Currently three apps are present, in order of increasing complexity these are:
+
+- a very basic "Hello World" example;
+- a basic example allowing sequence navigation, moving to a given latitude and longitude, and panorama upload;
+- a full example with a range of functionality; the "official OpenWanderer demo app"
+
+Please see the docs for each example for more details.
 
 Licensing
 ---------
@@ -92,5 +98,3 @@ As of the first commit on October 10, 2020, the code is now licensed under the L
 - but also allow proprietary applications to *use* OpenWanderer code.
 
 Any further changes to the current OpenTrailView - OTV360; repo [here](https://gitlab.com/nickw1/opentrailview) will remain under the GPL v3.
-
-Please see [here](https://github.com/openwanderer/example-app) for an example app built using the OpenWanderer server.
