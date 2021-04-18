@@ -75,6 +75,8 @@ OpenWanderer uses the `.env` file format to control environment variables. You s
 - `OTV_UPLOADS` - the directory where panorama files will be uploaded to.
 - `MAX_FILE_SIZE` - the maximum file size to accept for panoramas, in MB. Should match the `php.ini` setting.
 - `DB_USER` - your database user.
+- `DB_PASS` - your database password.
+- `DB_HOST` - database hostname.
 - `DB_DBASE` - the database holding the panoramas.
 - `BASE_PATH` (optional) - set to the path (relative to your server root) holding your OpenWanderer app. If omitted, it is assumed the app is in your server root.
 
