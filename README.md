@@ -67,10 +67,10 @@ These endpoints are only available if `auth` is `true`:
 
 `GET /panos/mine` - returns the panoramas belonging to the currently logged-in user, as JSON, as an array of JSON objects as described in `GET /panorama/{id}` above. Returns 401 if not logged in.
 
-Setting environment variables
+Environment variables
 -----------------------------
 
-OpenWanderer uses the `.env` file format to control environment variables. You should create a `.env` file in the root directory for your OpenWanderer app, and set the following fields:
+Configuring the Openwanderer-server is done through environment-variables. Following variables are currently supported:
 
 - `OTV_UPLOADS` - the directory where panorama files will be uploaded to.
 - `MAX_FILE_SIZE` - the maximum file size to accept for panoramas, in MB. Should match the `php.ini` setting.
@@ -79,6 +79,8 @@ OpenWanderer uses the `.env` file format to control environment variables. You s
 - `DB_HOST` - database hostname.
 - `DB_DBASE` - the database holding the panoramas.
 - `BASE_PATH` (optional) - set to the path (relative to your server root) holding your OpenWanderer app. If omitted, it is assumed the app is in your server root.
+
+OpenWanderer supports the `.env` file format to control environment variables. In case you want to use a `.env`-file for setting the required environment variables, you should create one in the root directory for your OpenWanderer app.
 
 Example apps
 ------------

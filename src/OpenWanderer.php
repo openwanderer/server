@@ -11,8 +11,10 @@ use \Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 class OpenWanderer {
     
     public static function createApp($options) {
-        $dotenv = \Dotenv\Dotenv::createImmutable(".");
-        $dotenv->load();
+        if (file_exists($envDir . '.env')) {
+            $dotenv = \Dotenv\Dotenv::createImmutable(".");
+            $dotenv->load($envDir);
+        }
         $setup_core_routes = require 'routes/core_routes.php';
         $setup_login_routes = require 'routes/login_routes.php';
         $container = new \DI\Container();
