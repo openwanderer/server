@@ -11,8 +11,10 @@ use \Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 class OpenWanderer {
     
     public static function createApp($options) {
-        $dotenv = \Dotenv\Dotenv::createImmutable(".");
-        $dotenv->load();
+        if (file_exists($envDir . '.env')) {
+            $dotenv = \Dotenv\Dotenv::createImmutable(".");
+            $dotenv->load($envDir);
+        }
         $setup_core_routes = require 'routes/core_routes.php';
         $setup_login_routes = require 'routes/login_routes.php';
         $container = new \DI\Container();
@@ -24,7 +26,7 @@ class OpenWanderer {
         if(isset($_ENV["BASE_PATH"])) $app->setBasePath($_ENV["BASE_PATH"]);
 
         $container->set('db', function() {
-            $conn = new \PDO("pgsql:host=localhost;dbname=".$_ENV["DB_DBASE"], $_ENV["DB_USER"]);
+            $conn = new \PDO("pgsql:host=".$_ENV["DB_HOST"].";dbname=".$_ENV["DB_DBASE"], $_ENV["DB_USER"], $_ENV["DB_PASS"]);
             return $conn;
         });
 
