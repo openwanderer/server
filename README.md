@@ -45,9 +45,9 @@ These endpoints are available whether `auth` is `true` or `false`:
 
 `POST /panorama/{id:[0-9]+}/rotate` - sets the pan, tilt and roll corrections to the values supplied in a JSON object containing `pan`, `tilt` and `roll` fields, sent in the request body. If `auth` is set to `true`, only the panorama owner or administrators can perform this operation, otherwise 401 is returned.
 
-`POST /panorama/{id:[0-9]+/move` - moves the panorama position to the given latitude and longitude, supplied as `lat` and `lon` fields within a JSON object sent in the request body. If `auth` is set to `true`, only the panorama owner or administrators can perform this operation, otherwise 401 is returned.
+`POST /panorama/{id:[0-9]+}/move` - moves the panorama position to the given latitude and longitude, supplied as `lat` and `lon` fields within a JSON object sent in the request body. If `auth` is set to `true`, only the panorama owner or administrators can perform this operation, otherwise 401 is returned.
 
-`POST /panorama/{id:[0-9]+/moveMulti` - moves multiple panoramas. A JSON object containing the panorama IDs as keys and JSON objects as specified in `move`, above, should be supplied.
+`POST /panorama/moveMulti` - moves multiple panoramas. A JSON object containing the panorama IDs as keys and JSON objects as specified in `move`, above, should be supplied.
 
 `POST /panorama/upload` - uploads a panorama, supplied as POST data `file` with a type of `file`.
 
@@ -68,7 +68,7 @@ These endpoints are only available if `auth` is `true`:
 `GET /panos/mine` - returns the panoramas belonging to the currently logged-in user, as JSON, as an array of JSON objects as described in `GET /panorama/{id}` above. Returns 401 if not logged in.
 
 Environment variables
------------------------------
+---------------------
 
 Configuring the Openwanderer-server is done through environment-variables. Following variables are currently supported:
 
@@ -89,7 +89,7 @@ A range of example apps are available in [this repository](https://github.com/op
 
 - a very basic "Hello World" example;
 - a basic example allowing sequence navigation, moving to a given latitude and longitude, and panorama upload;
-- a full example with a range of functionality; the "official OpenWanderer demo app"
+- a full example with a range of functionality; the "official OpenWanderer demo app". This now includes an installable **Docker image** of the server plus example app, for easy server installation, thanks to @MikiDi.
 
 Please see the docs for each example for more details.
 
