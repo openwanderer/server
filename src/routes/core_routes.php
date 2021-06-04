@@ -17,6 +17,7 @@ return function($app, $auth) {
     $app->get('/panorama/{id:[0-9]+}', $class.":getById");
     $app->delete('/panorama/{id:[0-9]+}', $class.":deletePano");
     $app->get('/panorama/{id:[0-9]+}.jpg', $class.":getPanoImage");
+    $app->get('/panorama/{id:[0-9]+}.r{width:[0-9]+}.jpg', $class.":getPanoImage");
     $app->post('/panorama/{id:[0-9]+}/authorise', $class.":authorisePano");
     $app->get('/nearest/{lon}/{lat}', $class.":getNearest"); 
     $app->get('/panos', $class.":getByBbox"); 
@@ -24,7 +25,7 @@ return function($app, $auth) {
     $app->post('/panorama/{id:[0-9]+}/move', $class.":move");
     $app->post('/panoramas/move', $class.":moveMulti");
     $app->post('/panorama/upload', $class.":uploadPano");
-
+    $app->get('/panoramas/mine', $class.':getAllByUser');
     $app->post('/sequence/create', $class.":createSequence");
     $app->get('/sequence/{id:[0-9]+}', $class.":getSequence");
 }

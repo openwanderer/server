@@ -298,7 +298,25 @@ class PanoController {
         if($row !== null) {
             if($this->isAdminUser() || $row["authorised"]==1 || $this->uid == $row["userid"]) {
                 $file=$_ENV["OTV_UPLOADS"]."/$args[id].jpg";
-                $res->getBody()->write(file_get_contents($file));
+                if(isset($args["width"])) {
+                    $im = imagecreatefromjpeg($file);
+                    $srcWidth = imagesx($im);
+                    $srcHeight = imagesy($im);
+                    $destWidth = $args["width"]; // srcWidth * 0.01 * $_GET['resize'];
+                    $aspectRatio = $srcWidth / $srcHeight;
+                    $destHeight = $destWidth / $aspectRatio;
+                    $imOut = imagecreatetruecolor($destWidth, $destHeight);
+                    imagecopyresized($imOut, $im, 0, 0, 0, 0, $destWidth, $destHeight, $srcWidth, $srcHeight);
+                    ob_start();
+                    imagejpeg($imOut);
+                    $data = ob_get_contents();
+                    ob_end_clean();
+                    imagedestroy($imOut);
+                    imagedestroy($im);
+                    $res->getBody()->write($data);
+                } else {
+                    $res->getBody()->write(file_get_contents($file));
+                }
                 return $res->withHeader("Content-Type", "image/jpg")
                     ->withHeader("Content-Length", filesize($file))
                     ->withHeader("Cache-control", "max-age=".(60*60*24*365))
