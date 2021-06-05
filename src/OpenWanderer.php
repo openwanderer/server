@@ -32,10 +32,18 @@ class OpenWanderer {
         });
 
         $view = new \Slim\Views\PhpRenderer('views');
-
-        $app->get('/', function(Request $req, Response $res, array $args) use ($view) {
-            return $view->render($res, empty($options['mainView']) ? 'index.html': $options['mainView']);
+ 
+        $container->set('view', function() use($view) {
+            return $view;
         });
+
+        if(!empty($options["mainRoute"])) {
+           $app->get('/', $options["mainRoute"])->setName('root');
+        } else {
+            $app->get('/', function(Request $req, Response $res, array $args) use ($view) {
+                return $view->render($res, empty($options['mainView']) ? 'index.html': $options['mainView']);
+            });
+        }
 
 
         $setup_core_routes($app, !empty($options["auth"]));
