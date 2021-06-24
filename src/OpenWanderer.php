@@ -12,7 +12,7 @@ class OpenWanderer {
     
     public static function createApp($options) {
         $envDir = getcwd();
-        if (file_exists($envDir . '.env')) {
+        if (file_exists($envDir . '/.env')) {
             $dotenv = \Dotenv\Dotenv::createImmutable(".");
             $dotenv->load($envDir);
         }
